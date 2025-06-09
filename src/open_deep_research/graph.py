@@ -37,6 +37,16 @@ from open_deep_research.utils import (
     select_and_execute_search
 )
 
+import uuid
+import os
+from IPython.display import Image, display, Markdown
+from langgraph.types import Command
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import START, END, StateGraph
+from langgraph.constants import Send
+
+
+
 ## Nodes -- 
 
 async def generate_report_plan(state: ReportState, config: RunnableConfig):
@@ -114,8 +124,8 @@ async def generate_report_plan(state: ReportState, config: RunnableConfig):
         # Allocate a thinking budget for claude-3-7-sonnet-latest as the planner model
         planner_llm = init_chat_model(model=planner_model, 
                                       model_provider=planner_provider, 
-                                      max_tokens=20_000, 
-                                      thinking={"type": "enabled", "budget_tokens": 16_000})
+                                      max_tokens=30_000,
+                                      thinking={"type": "enabled", "budget_tokens": 20_000})
 
     else:
         # With other models, thinking tokens are not specifically allocated
@@ -322,8 +332,8 @@ async def write_section(state: SectionState, config: RunnableConfig) -> Command[
         # Allocate a thinking budget for claude-3-7-sonnet-latest as the planner model
         reflection_model = init_chat_model(model=planner_model, 
                                            model_provider=planner_provider, 
-                                           max_tokens=20_000, 
-                                           thinking={"type": "enabled", "budget_tokens": 16_000}).with_structured_output(Feedback)
+                                           max_tokens=30_000,
+                                           thinking={"type": "enabled", "budget_tokens": 20_000}).with_structured_output(Feedback)
     else:
         reflection_model = init_chat_model(model=planner_model, 
                                            model_provider=planner_provider, model_kwargs=planner_model_kwargs).with_structured_output(Feedback)
